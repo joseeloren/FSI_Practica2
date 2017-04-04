@@ -70,7 +70,7 @@ batch_size = 20
 
 error = 2.0;
 epoch = 0;
-while error > 1.5:
+while error > 1.4:
     for jj in xrange((int)(len(x_train) / batch_size)):
         batch_xs = x_train[jj * batch_size: jj * batch_size + batch_size]
         batch_ys = y_train[jj * batch_size: jj * batch_size + batch_size]
@@ -80,9 +80,9 @@ while error > 1.5:
     print ("Epoch #:", epoch, "Error: ", error)
     epoch += 1
     result = sess.run(y, feed_dict={x: x_valid})
-    for b, r in zip(y_valid, result):
-        print (b, "-->", r)
-    print ("----------------------------------------------------------------------------------")
+    #for b, r in zip(y_valid, result):
+     #   print (b, "-->", r)
+    #print ("----------------------------------------------------------------------------------")
 
 print ("---------------------------------Test set-----------------------------------------")
 result = sess.run(y, feed_dict={x: x_test})
