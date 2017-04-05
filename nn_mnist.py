@@ -26,7 +26,7 @@ def one_hot(x, n):
 
 
 f = gzip.open('mnist.pkl.gz', 'rb')
-train_set, valid_set, test_set = pickle.load(f)
+train_set, valid_set, test_set = pickle.load(f,encoding='latin1')
 f.close()
 
 # TODO: the neural net!!
@@ -90,16 +90,15 @@ while 1:
     last_error = error
 
 print ("---------------------------------Test set-----------------------------------------")
-#result = sess.run(y, feed_dict={x: x_test})
-#count = 0
-#for b, r in zip(y_test, result):
-#    count+=1
-#    print(b, "-->", r)
-#    if count == 20:
-#        break
+result = sess.run(y, feed_dict={x: x_test})
+ok = 0
+for b, r in zip(y_test, result):
+    if b.argmax() == r.argmax():
+        ok += 1
+
 error = sess.run(loss, feed_dict={x: x_test, y_: y_test})
-print 'Error =', error
+print ('Error =', error)
+print ('Porcentaje aciertos = ', ok/len(y_test)*100, '%')
 print("----------------------------------------------------------------------------------")
 plt.plot(array)
-print array
 plt.show()  # Let's see a sample

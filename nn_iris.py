@@ -2,8 +2,8 @@ import tensorflow as tf
 import numpy as np
 
 
-#def xrange(*args, **kwargs):
-#    return iter(range(*args, **kwargs))
+def xrange(*args, **kwargs):
+    return iter(range(*args, **kwargs))
 
 # Translate a list of labels into an array of 0's and one 1.
 # i.e.: 4 -> [0,0,0,0,1,0,0,0,0,0]
@@ -58,9 +58,9 @@ init = tf.global_variables_initializer()
 sess = tf.Session()
 sess.run(init)
 
-print "----------------------"
-print "   Start training...  "
-print "----------------------"
+print ("----------------------")
+print ("   Start training...  ")
+print ("----------------------")
 
 batch_size = 20
 
@@ -83,18 +83,21 @@ while 1:
     #for b, r in zip(y_valid, result):
      #   print (b, "-->", r)
     #print ("----------------------------------------------------------------------------------")
-    if  abs(last_error - error) < 0.01 and epoch>10:
+    if  abs(last_error - error) < 0.0001 and epoch>10:
         break
 
     last_error = error
 
-print "---------------------------------Test set-----------------------------------------"
+print ("---------------------------------Test set-----------------------------------------")
 result = sess.run(y, feed_dict={x: x_test})
 ok = 0
 for b, r in zip(y_test, result):
-    print(b, "-->", r)
+    if b.argmax() == r.argmax():
+        ok += 1
+
 error = sess.run(loss, feed_dict={x: x_test, y_: y_test})
-print 'Error =', error
-print "----------------------------------------------------------------------------------"
+print ('Error =', error)
+print ('Porcentaje aciertos = ', ok/len(y_test)*100, '%')
+print("----------------------------------------------------------------------------------")
 plt.plot(array)
 plt.show()  # Let's see a sample
