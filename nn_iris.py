@@ -2,8 +2,8 @@ import tensorflow as tf
 import numpy as np
 
 
-def xrange(*args, **kwargs):
-    return iter(range(*args, **kwargs))
+#def xrange(*args, **kwargs):
+#    return iter(range(*args, **kwargs))
 
 # Translate a list of labels into an array of 0's and one 1.
 # i.e.: 4 -> [0,0,0,0,1,0,0,0,0,0]
@@ -35,10 +35,6 @@ y_valid = y_data[(int)(0.7*len(x_data)):(int)(0.85*len(x_data)), :]
 x_test = x_data[(int)(0.85*len(x_data)):, :]
 y_test = y_data[(int)(0.85*len(x_data)):, :]
 
-print("\nSome samples...")
-for i in range(20):
-    print(x_data[i], " -> ", y_data[i])
-print()
 
 x = tf.placeholder("float", [None, 4])  # samples
 y_ = tf.placeholder("float", [None, 3])  # labels
@@ -62,15 +58,18 @@ init = tf.global_variables_initializer()
 sess = tf.Session()
 sess.run(init)
 
-print ("----------------------")
-print ("   Start training...  ")
-print ("----------------------")
+print "----------------------"
+print "   Start training...  "
+print "----------------------"
 
 batch_size = 20
 
 error = 2.0;
 epoch = 0;
-while error > 1.4:
+last_error = 1000
+array = []
+import matplotlib.pyplot as plt
+while 1:
     for jj in xrange((int)(len(x_train) / batch_size)):
         batch_xs = x_train[jj * batch_size: jj * batch_size + batch_size]
         batch_ys = y_train[jj * batch_size: jj * batch_size + batch_size]
@@ -79,13 +78,23 @@ while error > 1.4:
     error = sess.run(loss, feed_dict={x: x_valid, y_: y_valid})
     print ("Epoch #:", epoch, "Error: ", error)
     epoch += 1
-    result = sess.run(y, feed_dict={x: x_valid})
+    array.append(error)
+    #result = sess.run(y, feed_dict={x: x_valid})
     #for b, r in zip(y_valid, result):
      #   print (b, "-->", r)
     #print ("----------------------------------------------------------------------------------")
+    if  abs(last_error - error) < 0.01 and epoch>10:
+        break
 
-print ("---------------------------------Test set-----------------------------------------")
+    last_error = error
+
+print "---------------------------------Test set-----------------------------------------"
 result = sess.run(y, feed_dict={x: x_test})
+ok = 0
 for b, r in zip(y_test, result):
     print(b, "-->", r)
-print("----------------------------------------------------------------------------------")
+error = sess.run(loss, feed_dict={x: x_test, y_: y_test})
+print 'Error =', error
+print "----------------------------------------------------------------------------------"
+plt.plot(array)
+plt.show()  # Let's see a sample
