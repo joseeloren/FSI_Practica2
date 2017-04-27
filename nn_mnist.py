@@ -26,7 +26,7 @@ def one_hot(x, n):
 
 
 f = gzip.open('mnist.pkl.gz', 'rb')
-train_set, valid_set, test_set = pickle.load(f,encoding='latin1')
+train_set, valid_set, test_set = pickle.load(f)#,encoding='latin1')
 f.close()
 
 # TODO: the neural net!!
@@ -52,6 +52,9 @@ h = tf.nn.sigmoid(tf.matmul(x, W1) + b1)
 y = tf.nn.softmax(tf.matmul(h, W2) + b2)
 
 loss = tf.reduce_mean(-tf.reduce_sum(y_ * tf.log(y),reduction_indices=[1]))
+loss2 = tf.reduce_mean(tf.squared_difference(y,y_))
+evaluation = tf.equal(tf.argmax(y,1),tf.argmax(y_,1))
+acu = tf.reduce_mean(tf.cast(evaluation,tf.float32))
 # info https://db-blog.web.cern.ch/blog/luca-canali/2016-07-neural-network-scoring-engine-plsql-recognizing-handwritten-digits
 train = tf.train.GradientDescentOptimizer(0.5).minimize(loss)  # learning rate: 0.01
 
@@ -77,14 +80,14 @@ while 1:
         batch_ys = y_train[jj * batch_size: jj * batch_size + batch_size]
         sess.run(train, feed_dict={x: batch_xs, y_: batch_ys})
 
-    error = sess.run(loss, feed_dict={x: x_valid, y_: y_valid})
+    error = sess.run(loss2, feed_dict={x: x_valid, y_: y_valid})
     array.append(error)
 
 
 
     print ("Epoch #:", epoch, "Error: ", error)
     epoch += 1
-    if (abs(error - last_error)) < 0.001:
+    if (abs(error - last_error)) < 0.00001:
         break
 
     last_error = error
@@ -96,9 +99,10 @@ for b, r in zip(y_test, result):
     if b.argmax() == r.argmax():
         ok += 1
 
+acuu = sess.run(acu,feed_dict={x: x_test, y_: y_test})
 error = sess.run(loss, feed_dict={x: x_test, y_: y_test})
 print ('Error =', error)
-print ('Porcentaje aciertos = ', ok/len(y_test)*100, '%')
+print 'Porcentaje aciertos = ',acuu*100,'%'
 print("----------------------------------------------------------------------------------")
 plt.plot(array)
 plt.show()  # Let's see a sample
