@@ -52,6 +52,8 @@ y = tf.nn.softmax(tf.matmul(h, W2) + b2)
 loss = tf.reduce_sum(tf.square(y_ - y))
 
 train = tf.train.GradientDescentOptimizer(0.01).minimize(loss)  # learning rate: 0.01
+evaluation = tf.equal(tf.argmax(y,1),tf.argmax(y_,1))
+acu = tf.reduce_mean(tf.cast(evaluation,tf.float32))
 
 init = tf.global_variables_initializer()
 
@@ -95,9 +97,12 @@ for b, r in zip(y_test, result):
     if b.argmax() == r.argmax():
         ok += 1
 
+acuu = sess.run(acu,feed_dict={x: x_test, y_: y_test})
 error = sess.run(loss, feed_dict={x: x_test, y_: y_test})
 print ('Error =', error)
-print ('Porcentaje aciertos = ', ok/len(y_test)*100, '%')
+print ('Porcentaje aciertos = ', acuu*100, '%')
 print("----------------------------------------------------------------------------------")
 plt.plot(array)
+plt.ylabel('Error calculado por TensorFlow')
+plt.xlabel('Épocas realizadas')
 plt.show()  # Let's see a sample

@@ -26,7 +26,7 @@ def one_hot(x, n):
 
 
 f = gzip.open('mnist.pkl.gz', 'rb')
-train_set, valid_set, test_set = pickle.load(f)#,encoding='latin1')
+train_set, valid_set, test_set = pickle.load(f,encoding='latin1')
 f.close()
 
 # TODO: the neural net!!
@@ -87,7 +87,7 @@ while 1:
 
     print ("Epoch #:", epoch, "Error: ", error)
     epoch += 1
-    if (abs(error - last_error)) < 0.00001:
+    if (abs(error - last_error)) < 0.0001:
         break
 
     last_error = error
@@ -102,7 +102,9 @@ for b, r in zip(y_test, result):
 acuu = sess.run(acu,feed_dict={x: x_test, y_: y_test})
 error = sess.run(loss, feed_dict={x: x_test, y_: y_test})
 print ('Error =', error)
-print 'Porcentaje aciertos = ',acuu*100,'%'
+print ('Porcentaje aciertos = ', acuu*100, '%')
 print("----------------------------------------------------------------------------------")
 plt.plot(array)
+plt.ylabel('Error calculado por TensorFlow')
+plt.xlabel('Épocas realizadas')
 plt.show()  # Let's see a sample
